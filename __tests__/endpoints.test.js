@@ -12,6 +12,18 @@ afterAll(() => {
   return db.end();
 });
 
+describe.only("GET /api/categoriess", () => {
+  it("Returns an error message when endpoint is not found", () => {
+    return request(app)
+      .get("/api/dasfas")
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("Path not found");
+      });
+  });
+});
+
 describe("GET /api/categories", () => {
   it("Returns an array of category objects, with slug and description properties", () => {
     return request(app)

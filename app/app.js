@@ -7,6 +7,10 @@ const { getCategories } = require("../controllers/controllers.js");
 //endpoints
 app.get("/api/categories", getCategories);
 
+app.get("/*", (req, res) => {
+  res.status(404).send({ msg: "Path not found" });
+});
+
 //custom error handling
 
 //default SQL error handling using error codes
