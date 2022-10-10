@@ -4,11 +4,11 @@
 
 We will be building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as reddit) which should provide this information to the front end architecture.
 
-Your database will be PSQL, and you will interact with it using [node-postgres](https://node-postgres.com/).
+Our database will be PSQL, and you will interact with it using [node-postgres](https://node-postgres.com/).
 
 ## Kanban
 
-### Link to my Trello Board here: https://northcoders.slack.com/archives/D043XKK664A/p1665395591895459
+### Link to my Trello Board here: https://trello.com/b/CO0DcXU2/be-project-awais
 
 To keep track of the tasks involved in this project we're going to use a kanban board. You can click on the ticket to find out more information about what is required for the feature.
 
