@@ -12,10 +12,10 @@ afterAll(() => {
   return db.end();
 });
 
-describe.only("GET /api/categoriess", () => {
+describe("GET /api/categoriess", () => {
   it("Returns an error message when endpoint is not found", () => {
     return request(app)
-      .get("/api/dasfas")
+      .get("/api/categoriess")
       .expect(404)
       .then(({ body }) => {
         console.log(body);
