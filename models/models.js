@@ -11,7 +11,7 @@ const fetchReviewId = (id) => {
     .query(`SELECT * FROM reviews WHERE review_id = $1;`, [id])
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 400, msg: "ID out of range" });
+        return Promise.reject({ status: 404, msg: "ID not found" });
       }
       return rows[0];
     });

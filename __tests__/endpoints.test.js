@@ -67,17 +67,17 @@ describe("GET /api/reviews/:review_id", () => {
   it("Returns an error message if the id is not present (Out of range)", () => {
     return request(app)
       .get("/api/reviews/4444")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("ID out of range");
+        expect(body.msg).toBe("ID not found");
       });
   });
   it("Returns an error message if the id is not present (Out of range)", () => {
     return request(app)
       .get("/api/reviews/four")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid ID, Please use a number");
+        expect(body.msg).toBe("Invalid ID");
       });
   });
 });
