@@ -75,9 +75,9 @@ describe("GET /api/reviews/:review_id", () => {
   it("Returns an error message if the id is not present (Out of range)", () => {
     return request(app)
       .get("/api/reviews/four")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid ID");
+        expect(body.msg).toBe("Invalid Request");
       });
   });
 });
@@ -97,6 +97,75 @@ describe("GET /api/users", () => {
             avatar_url: expect(String),
           });
         });
+      });
+  });
+});
+
+describe("PATCH /api/reviews/:review_id", () => {
+  it("PATCH /api/reviews/2 should update the voting count of that review", () => {
+    const newVotes = { inc_votes: 4 };
+    // const otherVotes = { inc_votes: -10 };
+    return request(app)
+      .patch("/api/reviews/2")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.votes).toBe(9);
+      });
+  });
+
+  it("PATCH /api/reviews/2 should update the voting count (negative) of that review", () => {
+    const otherVotes = { inc_votes: -10 };
+    return request(app)
+      .patch("/api/reviews/4")
+      .send(otherVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.votes).toBe(-3);
+      });
+  });
+
+  it("PATCH /api/reviews/223112 should respond with an error message and 404 error as the id does not exist", () => {
+    const otherVotes = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/reviews/223112")
+      .send(otherVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID");
+      });
+  });
+
+  it("PATCH /api/reviews/five should respond with an error message and 404 error as the id is not an integer", () => {
+    const otherVotes = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/reviews/five")
+      .send(otherVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request");
+      });
+  });
+
+  it("PATCH /api/reviews/5 with number of votes in the wrong format should respond with an error message as number of votes should be integer", () => {
+    const otherVotes = { inc_votes: "one" };
+    return request(app)
+      .patch("/api/reviews/5")
+      .send(otherVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request");
+      });
+  });
+
+  it("PATCH /api/reviews/5 with key other than inc_votes should respond with an error message as number of votes should be integer", () => {
+    const otherVotes = { add_votes: 2 };
+    return request(app)
+      .patch("/api/reviews/5")
+      .send(otherVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid update request");
       });
   });
 });
