@@ -81,3 +81,22 @@ describe("GET /api/reviews/:review_id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  it("GET /api/users should return array of objects with the following properties, username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Array);
+        expect(body).toHaveLength(4);
+        body.forEach((user) => {
+          expect.objectContaining({
+            username: expect(String),
+            name: expect(String),
+            avatar_url: expect(String),
+          });
+        });
+      });
+  });
+});
