@@ -75,7 +75,7 @@ describe("GET /api/reviews/:review_id", () => {
   it("Returns an error message if the id is not present (Out of range)", () => {
     return request(app)
       .get("/api/reviews/four")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid Request");
       });
@@ -141,7 +141,7 @@ describe("PATCH /api/reviews/:review_id", () => {
     return request(app)
       .patch("/api/reviews/five")
       .send(otherVotes)
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid Request");
       });
@@ -152,7 +152,7 @@ describe("PATCH /api/reviews/:review_id", () => {
     return request(app)
       .patch("/api/reviews/5")
       .send(otherVotes)
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid Request");
       });
