@@ -22,9 +22,7 @@ const fetchUsers = () => {
 };
 
 const patchReviewVotes = (id, voteBody) => {
-  const theKey = Object.keys(voteBody);
-
-  if (theKey[0] !== "inc_votes") {
+  if (!voteBody.inc_votes) {
     return Promise.reject({ status: 400, msg: "Invalid update request" });
   }
 
