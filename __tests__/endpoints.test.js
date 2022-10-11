@@ -52,6 +52,7 @@ describe("GET /api/reviews/:review_id", () => {
     "review_img_url",
     "created_at",
     "votes",
+    "comment_count",
   ];
   it("Returns a review object, with following properties, review_id, title, review_body, designer, review_img_url, votes, category field , owner and created_at", () => {
     return request(app)
@@ -78,6 +79,26 @@ describe("GET /api/reviews/:review_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid Request");
+      });
+  });
+  it("Returns a review object, now with comment-count as well for that review with some comment count", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body.review_id).toBe(2);
+        expect(body.comment_count).toBe(3);
+      });
+  });
+  it("Returns a review object, now with comment-count as well for that review with zero reviews", () => {
+    return request(app)
+      .get("/api/reviews/4")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body.review_id).toBe(4);
+        expect(body.comment_count).toBe(0);
       });
   });
 });

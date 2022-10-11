@@ -29,9 +29,9 @@ const getUsers = (req, res) => {
 };
 
 const updateReviewVotes = (req, res, next) => {
-  const voteBody = req.body;
+  const votes = req.body.inc_votes;
   const id = req.params.review_id;
-  patchReviewVotes(id, voteBody)
+  patchReviewVotes(id, votes)
     .then((updatedReview) => {
       res.status(200).send(updatedReview);
     })
