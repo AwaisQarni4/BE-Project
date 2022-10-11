@@ -18,7 +18,6 @@ describe("GET /api/categoriess", () => {
       .get("/api/categoriess")
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("Path not found");
       });
   });
@@ -38,6 +37,47 @@ describe("GET /api/categories", () => {
             description: expect(String),
           });
         });
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id", () => {
+  const expectedProperties = [
+    "review_id",
+    "title",
+    "category",
+    "designer",
+    "owner",
+    "review_body",
+    "review_img_url",
+    "created_at",
+    "votes",
+  ];
+  it("Returns a review object, with following properties, review_id, title, review_body, designer, review_img_url, votes, category field , owner and created_at", () => {
+    return request(app)
+      .get("/api/reviews/4")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(body.review_id).toBe(4);
+        const resultKeys = Object.keys(body);
+        expect(resultKeys).toEqual(expectedProperties);
+      });
+  });
+  it("Returns an error message if the id is not present (Out of range)", () => {
+    return request(app)
+      .get("/api/reviews/4444")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID out of range");
+      });
+  });
+  it("Returns an error message if the id is not present (Out of range)", () => {
+    return request(app)
+      .get("/api/reviews/four")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, Please use a number");
       });
   });
 });

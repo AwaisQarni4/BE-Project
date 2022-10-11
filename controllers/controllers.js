@@ -1,11 +1,20 @@
-const { fetchCategories } = require("../models/models.js");
+const { fetchCategories, fetchReviewId } = require("../models/models.js");
 
-const getCategories = (req, res) => {
+const getCategories = (req, res, next) => {
   fetchCategories()
     .then((categories) => {
       res.status(200).send(categories);
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
-module.exports = { getCategories };
+const getReviewId = (req, res, next) => {
+  const id = req.params.review_id;
+  fetchReviewId(id)
+    .then((review) => {
+      res.status(200).send(review);
+    })
+    .catch(next);
+};
+
+module.exports = { getCategories, getReviewId };
