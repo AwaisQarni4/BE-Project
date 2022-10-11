@@ -8,7 +8,15 @@ const fetchCategories = () => {
 
 const fetchReviewId = (id) => {
   return db
-    .query(`SELECT * FROM reviews WHERE review_id = $1;`, [id])
+    .query(
+      `SELECT reviews.*, COUNT(comments.comment_id) ::INT AS comment_count
+      FROM reviews 
+      LEFT JOIN comments 
+      ON reviews.review_id = comments.review_id 
+      WHERE reviews.review_id = $1
+      GROUP BY reviews.review_id;`,
+      [id]
+    )
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "ID not found" });
@@ -21,17 +29,15 @@ const fetchUsers = () => {
   return db.query(`SELECT * FROM users;`).then(({ rows }) => rows);
 };
 
-const patchReviewVotes = (id, voteBody) => {
-  if (!voteBody.inc_votes) {
+const patchReviewVotes = (id, votes) => {
+  if (!votes) {
     return Promise.reject({ status: 400, msg: "Invalid update request" });
   }
-
-  const newVotes = voteBody.inc_votes;
 
   return db
     .query(
       `UPDATE reviews SET votes = votes + $2 WHERE review_id = $1 RETURNING *;`,
-      [id, newVotes]
+      [id, votes]
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
