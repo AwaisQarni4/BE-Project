@@ -21,4 +21,31 @@ const fetchUsers = () => {
   return db.query(`SELECT * FROM users;`).then(({ rows }) => rows);
 };
 
-module.exports = { fetchCategories, fetchReviewId, fetchUsers };
+const patchReviewVotes = (id, voteBody) => {
+  const theKey = Object.keys(voteBody);
+
+  if (theKey[0] !== "inc_votes") {
+    return Promise.reject({ status: 400, msg: "Invalid update request" });
+  }
+
+  const newVotes = voteBody.inc_votes;
+
+  return db
+    .query(
+      `UPDATE reviews SET votes = votes + $2 WHERE review_id = $1 RETURNING *;`,
+      [id, newVotes]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Invalid ID" });
+      }
+      return rows[0];
+    });
+};
+
+module.exports = {
+  fetchCategories,
+  fetchReviewId,
+  fetchUsers,
+  patchReviewVotes,
+};

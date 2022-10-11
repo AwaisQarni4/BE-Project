@@ -4,6 +4,7 @@ const {
   getCategories,
   getReviewId,
   getUsers,
+  updateReviewVotes,
 } = require("../controllers/controllers.js");
 const {
   PSQLError,
@@ -11,9 +12,12 @@ const {
   internalError,
 } = require("./error-handling.js");
 
+app.use(express.json());
+
 app.get("/api/categories", getCategories);
 app.get("/api/reviews/:review_id", getReviewId);
 app.get("/api/users", getUsers);
+app.patch("/api/reviews/:review_id", updateReviewVotes);
 
 app.get("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found" });
