@@ -6,4 +6,15 @@ const fetchCategories = () => {
   });
 };
 
-module.exports = { fetchCategories };
+const fetchReviewId = (id) => {
+  return db
+    .query(`SELECT * FROM reviews WHERE review_id = $1;`, [id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "ID not found" });
+      }
+      return rows[0];
+    });
+};
+
+module.exports = { fetchCategories, fetchReviewId };
