@@ -4,6 +4,7 @@ const {
   fetchUsers,
   patchReviewVotes,
   fetchReviews,
+  fetchComments,
 } = require("../models/models.js");
 
 const getCategories = (req, res, next) => {
@@ -48,10 +49,22 @@ const getReviews = (req, res, next) => {
     .catch(next);
 };
 
+const getComments = (req, res, next) => {
+  const id = req.params.review_id;
+  fetchReviewId(id)
+    .then(() => {
+      fetchComments(id).then((comments) => {
+        res.status(200).send(comments);
+      });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getCategories,
   getReviewId,
   getUsers,
   updateReviewVotes,
   getReviews,
+  getComments,
 };
