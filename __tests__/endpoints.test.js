@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data");
+require("jest-sorted");
 
 beforeEach(() => {
   return seed(testData);
@@ -187,6 +188,47 @@ describe("PATCH /api/reviews/:review_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid update request");
+      });
+  });
+});
+
+describe("GET /api/reviews", () => {
+  it("GET /api/reviews responds with an array and following properties, owner, title, review_id, category, review_img_url, created_at, votes, designer and comment_count", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  it("GET /api/reviews?cateogry=xyz responds with reviews filtered by cateogry xyz", () => {
+    return request(app)
+      .get("/api/reviews?category=euro game")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((review) => {
+          expect(review.category).toBe("euro game");
+        });
+      });
+  });
+
+  it("GET /api/reviews?cateogry=xyz responds with a message if category value does not exist", () => {
+    return request(app)
+      .get("/api/reviews?category=EA Games")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid query!");
+      });
+  });
+
+  it("GET /api/reviewss?cateogryy=xyz responds with a sorted reviews array as the query is not right", () => {
+    return request(app)
+      .get("/api/reviews?categoryy=euro game")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { descending: true });
       });
   });
 });

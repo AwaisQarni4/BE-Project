@@ -3,6 +3,7 @@ const {
   fetchReviewId,
   fetchUsers,
   patchReviewVotes,
+  fetchReviews,
 } = require("../models/models.js");
 
 const getCategories = (req, res, next) => {
@@ -38,4 +39,19 @@ const updateReviewVotes = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { getCategories, getReviewId, getUsers, updateReviewVotes };
+const getReviews = (req, res, next) => {
+  const categoryNeeded = req.query.category;
+  fetchReviews(categoryNeeded)
+    .then((reviews) => {
+      res.status(200).send(reviews);
+    })
+    .catch(next);
+};
+
+module.exports = {
+  getCategories,
+  getReviewId,
+  getUsers,
+  updateReviewVotes,
+  getReviews,
+};
