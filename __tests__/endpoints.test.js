@@ -232,3 +232,52 @@ describe("GET /api/reviews", () => {
       });
   });
 });
+
+describe("GET /api/reviews/:review_id/comments", () => {
+  it("GET /api/reviews/:review_id/comments responds with array of comments for the given review_id with certain properties", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(3);
+        body.forEach((comment) => {
+          expect.objectContaining({
+            comment_id: expect(Number),
+            body: expect(String),
+            review_id: expect(Number),
+            author: expect(String),
+            votes: expect(Number),
+            created_at: expect(String),
+          });
+        });
+      });
+  });
+
+  it("GET /api/reviews/:review_id/comments responds with 200 status and an empty array", () => {
+    return request(app)
+      .get("/api/reviews/4/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Array);
+        expect(body.length).toBe(0);
+      });
+  });
+
+  it("GET /api/reviews/:review_id/comments responds with 404 status when review id out of range", () => {
+    return request(app)
+      .get("/api/reviews/4444/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+
+  it("GET /api/reviews/:review_id/comments responds with 400 status when review id is not a number", () => {
+    return request(app)
+      .get("/api/reviews/four/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request");
+      });
+  });
+});
