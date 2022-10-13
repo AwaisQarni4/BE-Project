@@ -92,6 +92,27 @@ const fetchComments = (id) => {
     });
 };
 
+const postComment = (id, username, body) => {
+  if (!username || !body) {
+    return Promise.reject({ status: 400, msg: "Wrong Input" });
+  }
+
+  return db
+    .query(`SELECT username FROM users WHERE username = $1`, [username])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 400, msg: "Username not found" });
+      }
+      return db
+        .query(
+          `INSERT INTO comments (body, author, review_id) 
+      VALUES ($1, $2, $3) RETURNING *;`,
+          [body, username, id]
+        )
+        .then(({ rows }) => rows[0]);
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewId,
@@ -99,4 +120,5 @@ module.exports = {
   patchReviewVotes,
   fetchReviews,
   fetchComments,
+  postComment,
 };

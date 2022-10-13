@@ -281,3 +281,79 @@ describe("GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe.only("POST /api/reviews/:review_id/comments", () => {
+  it("POST /api/reviews/:review_id/comments can post a comment with the right input", () => {
+    const newComment = {
+      username: "mallionaire",
+      body: "Nice game!",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment_id).toBe(7);
+        expect(body.body).toBe(newComment.body);
+        expect(body.author).toBe(newComment.username);
+        expect(body.votes).toBe(0);
+        expect(typeof body.created_at).toBe("string");
+      });
+  });
+
+  it("POST /api/reviews/:review_id/comments returns error if not provided with the right input", () => {
+    const newComment = {
+      myname: "mallionaire",
+      body: "Nice game!",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Wrong Input");
+      });
+  });
+
+  it("POST /api/reviews/:review_id/comments returns error if provided with the username that does not exist", () => {
+    const newComment = {
+      username: "awais",
+      body: "Nice game!",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username not found");
+      });
+  });
+
+  it("POST /api/reviews/:review_id/comments returns error if review id is not valid", () => {
+    const newComment = {
+      username: "mallionaire",
+      body: "Nice game!",
+    };
+    return request(app)
+      .post("/api/reviews/four/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request");
+      });
+  });
+
+  it("POST /api/reviews/:review_id/comments returns error if review id not found", () => {
+    const newComment = {
+      username: "mallionaire",
+      body: "Nice game!",
+    };
+    return request(app)
+      .post("/api/reviews/4345/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+});
