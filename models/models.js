@@ -94,7 +94,6 @@ const fetchComments = (id) => {
 
 const postComment = (id, username, body) => {
   if (!username || !body) {
-    console.log("In reject");
     return Promise.reject({ status: 400, msg: "Wrong Input" });
   }
 

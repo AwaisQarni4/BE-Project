@@ -64,15 +64,20 @@ const getComments = (req, res, next) => {
 const addComment = (req, res, next) => {
   const id = req.params.review_id;
   const { username, body } = req.body;
-  console.log(username, body);
-
   fetchReviewId(id)
     .then(() => {
-      postComment(id, username, body)
-        .then((comment) => res.status(201).send(comment))
-        .catch(next);
+      return postComment(id, username, body);
     })
+    .then((comment) => res.status(201).send(comment))
     .catch(next);
+
+  // fetchReviewId(id)
+  //   .then(() => {
+  //     postComment(id, username, body)
+  //       .then((comment) => res.status(201).send(comment))
+  //       .catch(next);
+  //   })
+  //   .catch(next);
 };
 
 module.exports = {
