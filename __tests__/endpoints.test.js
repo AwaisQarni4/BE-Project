@@ -231,6 +231,64 @@ describe("GET /api/reviews", () => {
         expect(body).toBeSortedBy("created_at", { descending: true });
       });
   });
+
+  it("GET /api/reviews?sort_by=xyz responds with reviews sorted by xyz if it exists", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
+  it("GET /api/reviews?sort_by=xyz responds with reviews sorted by xyz if it exists", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=owner")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("owner", { descending: true });
+      });
+  });
+
+  it("GET /api/reviews?sort_by=xyz responds with error if xyz does not exists", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=price")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid query");
+      });
+  });
+
+  it("GET /api/reviews?order=xyz responds with reviews sorted by asc or dsc", () => {
+    return request(app)
+      .get("/api/reviews?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+
+  it("GET /api/reviews?order=xyz responds with error if xyz does not exists", () => {
+    return request(app)
+      .get("/api/reviews?order=descending")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid query");
+      });
+  });
+
+  it("GET /api/reviews?sorting=xyz responds with the default array wrt sort_by = created at and order = desc", () => {
+    return request(app)
+      .get("/api/reviews?sorting=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
 });
 
 describe("GET /api/reviews/:review_id/comments", () => {
@@ -282,7 +340,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
   });
 });
 
-describe.only("POST /api/reviews/:review_id/comments", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
   it("POST /api/reviews/:review_id/comments can post a comment with the right input", () => {
     const newComment = {
       username: "mallionaire",

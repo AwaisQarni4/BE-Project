@@ -1,5 +1,6 @@
 const { disable } = require("../app/app.js");
 const db = require("../db/connection.js");
+const { includes } = require("../db/data/test-data/categories.js");
 
 const fetchCategories = () => {
   return db.query("SELECT * FROM categories;").then(({ rows }) => {
@@ -48,22 +49,41 @@ const patchReviewVotes = (id, votes) => {
     });
 };
 
-const fetchReviews = (categoryNeeded) => {
-  const basicQuery = `SELECT reviews.review_id, title, designer, review_img_url, reviews.votes, category, owner, reviews.created_at, COUNT(comments.comment_id) AS comment_count
-  FROM reviews 
-  LEFT JOIN comments 
+const fetchReviews = (
+  categoryNeeded,
+  sortQuery = "created_at",
+  orderQuery = "DESC"
+) => {
+  orderQuery = orderQuery.toUpperCase();
+
+  const validSorts = [
+    "title",
+    "designer",
+    "owner",
+    "review_img_url",
+    "review_body",
+    "category",
+    "created_at",
+    "votes",
+  ];
+  const validOrder = ["ASC", "DESC"];
+
+  if (!validSorts.includes(sortQuery) || !validOrder.includes(orderQuery)) {
+    return Promise.reject({ status: 400, msg: "Invalid query" });
+  }
+
+  const queryVals = [];
+  let basicQuery = `SELECT reviews.review_id, title, designer, review_img_url, reviews.votes, category, owner, reviews.created_at, COUNT(comments.comment_id) AS comment_count
+  FROM reviews
+  LEFT JOIN comments
   ON reviews.review_id = comments.review_id`;
 
-  const categoryQuery = ` WHERE category = $1`;
-
-  const groupQuery = ` GROUP BY reviews.review_id
-  ORDER BY reviews.created_at DESC;`;
-
-  if (categoryNeeded === undefined) {
-    return db.query(basicQuery + groupQuery).then(({ rows }) => {
-      return rows;
-    });
+  if (categoryNeeded) {
+    basicQuery += ` WHERE category = $1`;
+    queryVals.push(categoryNeeded);
   }
+
+  basicQuery += ` GROUP BY reviews.review_id ORDER BY ${sortQuery} ${orderQuery};`;
 
   let categories = [];
 
@@ -75,12 +95,13 @@ const fetchReviews = (categoryNeeded) => {
       return uniqueCategories;
     })
     .then((uniqueCategories) => {
-      if (!uniqueCategories.includes(categoryNeeded)) {
+      if (
+        categoryNeeded != undefined &&
+        !uniqueCategories.includes(categoryNeeded)
+      ) {
         return Promise.reject({ status: 400, msg: "Invalid query!" });
       }
-      return db
-        .query(basicQuery + categoryQuery + groupQuery, [categoryNeeded])
-        .then(({ rows }) => rows);
+      return db.query(basicQuery, queryVals).then(({ rows }) => rows);
     });
 };
 
