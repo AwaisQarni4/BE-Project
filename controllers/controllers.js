@@ -5,6 +5,7 @@ const {
   patchReviewVotes,
   fetchReviews,
   fetchComments,
+  postComment,
 } = require("../models/models.js");
 
 const getCategories = (req, res, next) => {
@@ -60,6 +61,20 @@ const getComments = (req, res, next) => {
     .catch(next);
 };
 
+const addComment = (req, res, next) => {
+  const id = req.params.review_id;
+  const { username, body } = req.body;
+  console.log(username, body);
+
+  fetchReviewId(id)
+    .then(() => {
+      postComment(id, username, body)
+        .then((comment) => res.status(201).send(comment))
+        .catch(next);
+    })
+    .catch(next);
+};
+
 module.exports = {
   getCategories,
   getReviewId,
@@ -67,4 +82,5 @@ module.exports = {
   updateReviewVotes,
   getReviews,
   getComments,
+  addComment,
 };
