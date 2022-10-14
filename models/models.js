@@ -88,9 +88,9 @@ const fetchReviews = (
   let categories = [];
 
   return db
-    .query(`SELECT category FROM reviews;`)
+    .query(`SELECT slug FROM categories;`)
     .then(({ rows }) => {
-      rows.forEach((row) => categories.push(row.category));
+      rows.forEach((row) => categories.push(row.slug));
       const uniqueCategories = [...new Set(categories)];
       return uniqueCategories;
     })

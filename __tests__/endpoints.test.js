@@ -213,6 +213,16 @@ describe("GET /api/reviews", () => {
       });
   });
 
+  it("GET /api/reviews?cateogry=xyz responds with an empty array if category exists but has no reviews", () => {
+    return request(app)
+      .get("/api/reviews?category=children's games")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Array);
+        expect(body.length).toBe(0);
+      });
+  });
+
   it("GET /api/reviews?cateogry=xyz responds with a message if category value does not exist", () => {
     return request(app)
       .get("/api/reviews?category=EA Games")
@@ -287,6 +297,16 @@ describe("GET /api/reviews", () => {
       .then(({ body }) => {
         expect(body.length).toBe(13);
         expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  it("GET /api/reviews?sort_by=xyz&order=abc responds with the default array wrt sort_by = xyz and order = abc", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("votes", { descending: false });
       });
   });
 });
