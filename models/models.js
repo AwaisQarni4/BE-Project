@@ -134,6 +134,16 @@ const postComment = (id, username, body) => {
     });
 };
 
+const removeComment = (id) => {
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Invalid ID" });
+      }
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewId,
@@ -142,4 +152,5 @@ module.exports = {
   fetchReviews,
   fetchComments,
   postComment,
+  removeComment,
 };

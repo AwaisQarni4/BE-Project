@@ -8,6 +8,7 @@ const {
   getReviews,
   getComments,
   addComment,
+  deleteComment,
 } = require("../controllers/controllers.js");
 const {
   PSQLError,
@@ -24,6 +25,7 @@ app.patch("/api/reviews/:review_id", updateReviewVotes);
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id/comments", getComments);
 app.post("/api/reviews/:review_id/comments", addComment);
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.get("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found" });

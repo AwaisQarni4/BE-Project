@@ -435,3 +435,27 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  it("Deletes a comment if a valid id is provided", () => {
+    return request(app).delete("/api/comments/5").expect(204);
+  });
+
+  it("Returns error msg if ID is out of range", () => {
+    return request(app)
+      .delete("/api/comments/456")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID");
+      });
+  });
+
+  it("Returns error msg if ID is not a number", () => {
+    return request(app)
+      .delete("/api/comments/one")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request");
+      });
+  });
+});

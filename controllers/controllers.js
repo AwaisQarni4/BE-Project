@@ -6,6 +6,7 @@ const {
   fetchReviews,
   fetchComments,
   postComment,
+  removeComment,
 } = require("../models/models.js");
 
 const getCategories = (req, res, next) => {
@@ -75,6 +76,15 @@ const addComment = (req, res, next) => {
     .catch(next);
 };
 
+const deleteComment = (req, res, next) => {
+  const id = req.params.comment_id;
+  removeComment(id)
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch(next);
+};
+
 module.exports = {
   getCategories,
   getReviewId,
@@ -83,4 +93,5 @@ module.exports = {
   getReviews,
   getComments,
   addComment,
+  deleteComment,
 };
