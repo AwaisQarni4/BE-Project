@@ -282,7 +282,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
   });
 });
 
-describe.only("POST /api/reviews/:review_id/comments", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
   it("POST /api/reviews/:review_id/comments can post a comment with the right input", () => {
     const newComment = {
       username: "mallionaire",
@@ -354,6 +354,30 @@ describe.only("POST /api/reviews/:review_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("ID not found");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  it("Deletes a comment if a valid id is provided", () => {
+    return request(app).delete("/api/comments/5").expect(204);
+  });
+
+  it("Returns error msg if ID is out of range", () => {
+    return request(app)
+      .delete("/api/comments/456")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID");
+      });
+  });
+
+  it("Returns error msg if ID is not a number", () => {
+    return request(app)
+      .delete("/api/comments/one")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Request");
       });
   });
 });
