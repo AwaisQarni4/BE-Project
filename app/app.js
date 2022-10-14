@@ -9,6 +9,7 @@ const {
   getComments,
   addComment,
   deleteComment,
+  getEndpoints,
 } = require("../controllers/controllers.js");
 const {
   PSQLError,
@@ -26,6 +27,7 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id/comments", getComments);
 app.post("/api/reviews/:review_id/comments", addComment);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api", getEndpoints);
 
 app.get("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found" });

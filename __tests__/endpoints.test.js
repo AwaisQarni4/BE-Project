@@ -458,3 +458,12 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe.only("GET /api", () => {
+  it("Gets all the endpoints and their description", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => console.log(body));
+  });
+});
