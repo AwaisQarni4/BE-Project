@@ -126,7 +126,6 @@ describe("GET /api/users", () => {
 describe("PATCH /api/reviews/:review_id", () => {
   it("PATCH /api/reviews/2 should update the voting count of that review", () => {
     const newVotes = { inc_votes: 4 };
-    // const otherVotes = { inc_votes: -10 };
     return request(app)
       .patch("/api/reviews/2")
       .send(newVotes)
