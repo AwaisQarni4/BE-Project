@@ -43,7 +43,10 @@ const updateReviewVotes = (req, res, next) => {
 
 const getReviews = (req, res, next) => {
   const categoryNeeded = req.query.category;
-  fetchReviews(categoryNeeded)
+  const sortQuery = req.query.sort_by;
+  const orderQuery = req.query.order;
+
+  fetchReviews(categoryNeeded, sortQuery, orderQuery)
     .then((reviews) => {
       res.status(200).send(reviews);
     })
@@ -70,14 +73,6 @@ const addComment = (req, res, next) => {
     })
     .then((comment) => res.status(201).send(comment))
     .catch(next);
-
-  // fetchReviewId(id)
-  //   .then(() => {
-  //     postComment(id, username, body)
-  //       .then((comment) => res.status(201).send(comment))
-  //       .catch(next);
-  //   })
-  //   .catch(next);
 };
 
 module.exports = {
